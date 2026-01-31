@@ -8,7 +8,6 @@ cup_wall_thickness = 1.2;    // Wall thickness of the band
 
 // Base lobe settings
 lobe_length = 35;            // How far the lobe extends toward ring center
-lobe_width = 40;             // Width of the lobe at its widest
 
 // Vertical post settings (connects mounting block to lobe)
 post_height = 40;            // Height of vertical post

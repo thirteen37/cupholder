@@ -33,12 +33,54 @@ openscad -o hook.stl hook.scad
 
 ## Configuration
 
-Edit `config.scad` to customize dimensions:
-- Cup diameter and height
-- Wall thickness
-- Hook dimensions
-- Dovetail joint parameters
+All dimensions in `config.scad` are in millimeters.
+
+### Cup Holder Dimensions
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `cup_diameter` | 70 | Inner diameter of the ring |
+| `cup_holder_height` | 20 | Height of the ring |
+| `cup_wall_thickness` | 1.2 | Wall thickness of the ring |
+
+### Post and Lobe Dimensions
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `post_height` | 40 | Height of vertical post below ring |
+| `post_thickness` | 2 | Thickness of vertical post |
+| `lobe_length` | 35 | How far lobe extends toward ring center |
+
+### Hook Dimensions
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `hook_arm_height` | 65 | Height of vertical arm above the ring |
+| `hook_tip_length` | 40 | Horizontal length of hook tip |
+| `hook_tip_depth` | 20 | How far the hook tip curls down |
+| `hook_width` | 25 | Width of the hook arm |
+| `hook_thickness` | 2 | Thickness of the hook arm |
+
+### Dovetail Joint Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `dovetail_width_base` | 10 | Width at narrow end (top) |
+| `dovetail_width_top` | 14 | Width at wide end (bottom) |
+| `dovetail_height` | 15 | Height of dovetail |
+| `dovetail_depth` | 4 | Depth of dovetail protrusion |
+| `dovetail_tolerance` | 0.3 | Gap between male/female parts for fit |
+
+### Calculated Values
+
+| Value | Formula | Description |
+|-------|---------|-------------|
+| `mounting_block_thickness` | max(post_thickness, cup_wall_thickness) + dovetail_depth | Thickness of the mounting block on the ring |
 
 ## Printing
 
-Print the cupholder upside-down (ring on bed, lobe on top) to minimize overhangs.
+Print both parts upside-down to minimize overhangs:
+- **Cup holder**: Ring on bed, lobe on top. Use the included hollow cylinder support (toggle `show_lobe_support` in cupholder.scad).
+- **Hook**: Hook tip on bed, dovetail on top. The dovetail has a 30° chamfer for printability.
+
+Use `print_orientation.scad` to preview both parts in print orientation.
