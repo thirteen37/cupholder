@@ -50,13 +50,23 @@ module dovetail_protrusion() {
 module dovetail_positive() {
     // Dovetail profile - wider at bottom, narrower at top
     // This slides up into the slot on the mounting block
-    linear_extrude(height = dovetail_height)
-    polygon(points = [
-        [-dovetail_width_base/2, 0],
-        [-dovetail_width_top/2, dovetail_depth],
-        [dovetail_width_top/2, dovetail_depth],
-        [dovetail_width_base/2, 0]
-    ]);
+    difference() {
+        linear_extrude(height = dovetail_height)
+        polygon(points = [
+            [-dovetail_width_base/2, 0],
+            [-dovetail_width_top/2, dovetail_depth],
+            [dovetail_width_top/2, dovetail_depth],
+            [dovetail_width_base/2, 0]
+        ]);
+
+        // Chamfer at top outer edge - 30° from horizontal for printability
+        // When printed upside down, this reduces overhang to ~50% overlap
+        // Pivot at inner edge, rotate so outer edge dips down
+        translate([0, 0, dovetail_height])
+        rotate([-30, 0, 0])
+        translate([-(dovetail_width_top + 2)/2, 0, 0])
+        cube([dovetail_width_top + 2, dovetail_depth * 2, dovetail_height]);
+    }
 }
 
 // Render the hook

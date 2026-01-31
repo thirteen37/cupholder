@@ -103,5 +103,34 @@ module dovetail_negative() {
     ]);
 }
 
+// Temporary print support - hollow cylinder from lobe tip to ring top
+// Remove after printing by snapping off
+module lobe_support() {
+    support_wall = 0.4;  // Single nozzle width for easy removal
+    support_diameter = 25;  // Same as lobe tip diameter
+    support_gap = 0.2;  // Layer height gap for easy snap-off
+    lobe_thickness = cup_wall_thickness;
+
+    // Lobe tip center position
+    lobe_tip_y = cup_diameter/2 + post_thickness/2 - lobe_length;
+
+    // Height from just above lobe top (with gap) to top of ring
+    // Gap is between support bottom and lobe top surface (Z = -post_height)
+    support_bottom = -post_height + support_gap;
+    support_top = cup_holder_height;
+    support_height = support_top - support_bottom;
+
+    translate([0, lobe_tip_y, support_bottom])
+    difference() {
+        cylinder(h = support_height, d = support_diameter);
+        translate([0, 0, -0.1])
+        cylinder(h = support_height + 0.2, d = support_diameter - 2 * support_wall);
+    }
+}
+
+// Toggle for print support
+show_lobe_support = true;
+
 // Render the cup holder
 cup_holder();
+if (show_lobe_support) lobe_support();
