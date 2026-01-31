@@ -10,9 +10,24 @@ use <hook.scad>
 show_assembled = true;
 explode_distance = 30;
 
+// Display options
+show_cup = true;
+
 // Colors
 cupholder_color = "SteelBlue";
 hook_color = "Orange";
+cup_color = "White";
+
+// Starbucks Grande cup (approximate dimensions)
+// Source: https://size-charts.com/topics/starbucks-size-chart/
+cup_height = 127;        // Height in mm
+cup_top_diameter = 84;   // Top opening diameter
+cup_bottom_diameter = 60; // Base diameter
+
+module starbucks_cup() {
+    // Tapered cylinder representing the cup
+    cylinder(h = cup_height, d1 = cup_bottom_diameter, d2 = cup_top_diameter);
+}
 
 module assembly() {
     // Cup holder at origin
@@ -30,6 +45,13 @@ module assembly() {
         explode_offset  // Dovetail starts at z=0
     ])
     hook();
+
+    // Cup sitting in the holder, resting on top of lobe
+    if (show_cup) {
+        color(cup_color, 0.7)
+        translate([0, 0, -post_height])
+        starbucks_cup();
+    }
 }
 
 assembly();

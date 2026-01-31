@@ -77,6 +77,15 @@ All dimensions in `config.scad` are in millimeters.
 |-------|---------|-------------|
 | `mounting_block_thickness` | max(post_thickness, cup_wall_thickness) + dovetail_depth | Thickness of the mounting block on the ring |
 
+### Assembly View Options (in assembly.scad)
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `show_cup` | true | Display Starbucks Grande cup in assembly |
+| `cup_height` | 127 | Cup height |
+| `cup_top_diameter` | 84 | Cup top opening diameter |
+| `cup_bottom_diameter` | 60 | Cup base diameter |
+
 ## Printing
 
 Print both parts upside-down to minimize overhangs:
