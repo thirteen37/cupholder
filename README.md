@@ -17,6 +17,8 @@ Two-piece design connected via dovetail joint:
 | `hook.scad` | Hook part |
 | `assembly.scad` | Combined view of both parts |
 | `print_orientation.scad` | Flipped view for print bed orientation |
+| `generate_preview.py` | Generate interactive HTML preview |
+| `export.sh` | Export 3MF files for printing |
 
 ## Usage
 
@@ -25,7 +27,23 @@ Open in OpenSCAD:
 open -a OpenSCAD assembly.scad
 ```
 
-Export STL files for printing:
+### Scripts
+
+**Generate interactive HTML preview:**
+```bash
+./generate_preview.py
+```
+Creates `assembly_preview.html` with an interactive 3D view (cupholder, hook, and placeholder cup). Reads parameters from `config.scad` to position parts correctly. Open the HTML file in any browser.
+
+**Export 3MF files for printing:**
+```bash
+./export.sh
+```
+Exports print-ready 3MF files:
+- `cupholder_print.3mf` - cupholder with lobe support, flipped for printing
+- `hook_print.3mf` - hook flipped for printing
+
+**Export STL files manually:**
 ```bash
 openscad -o cupholder.stl cupholder.scad
 openscad -o hook.stl hook.scad
