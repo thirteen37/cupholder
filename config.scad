@@ -26,7 +26,7 @@ dovetail_width_base = 10;    // Width at narrow end (top)
 dovetail_width_top = 14;     // Width at wide end (bottom)
 dovetail_height = 15;        // Height of dovetail (1.5cm)
 dovetail_depth = 4;          // Depth of dovetail protrusion
-dovetail_tolerance = 0.2;    // Gap for fit
+dovetail_tolerance = 0.4;    // Gap for fit
 
 // Calculated values
 mounting_block_thickness = max(post_thickness, cup_wall_thickness) + dovetail_depth;

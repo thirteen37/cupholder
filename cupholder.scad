@@ -58,6 +58,7 @@ module mounting_block() {
 module base_lobe() {
     lobe_thickness = cup_wall_thickness;
     post_width = hook_width;
+    chamfer_size = post_thickness;  // 2mm 45-degree chamfer
 
     // Vertical post from mounting block down to lobe
     // Inner face aligned with ring inner surface (cup_diameter/2)
@@ -79,6 +80,30 @@ module base_lobe() {
             cylinder(h = lobe_thickness, d = 25);
         }
     }
+
+    // 45-degree chamfer at inside corner where lobe meets post
+    // Strengthens the right-angle joint - fills the concave angle
+    // The inside corner is at the FRONT of the post, ABOVE the lobe
+    front_y = cup_diameter/2;
+    polyhedron(
+        points = [
+            // Left face triangle (at X = -post_width/2)
+            [-post_width/2, front_y, -post_height],                           // 0: Corner
+            [-post_width/2, front_y - chamfer_size, -post_height],            // 1: Toward center
+            [-post_width/2, front_y, -post_height + chamfer_size],            // 2: Up along post
+            // Right face triangle (at X = +post_width/2)
+            [post_width/2, front_y, -post_height],                            // 3: Corner
+            [post_width/2, front_y - chamfer_size, -post_height],             // 4: Toward center
+            [post_width/2, front_y, -post_height + chamfer_size]              // 5: Up along post
+        ],
+        faces = [
+            [0, 1, 2],       // Left triangle
+            [5, 4, 3],       // Right triangle
+            [0, 3, 4, 1],    // Bottom face (along lobe top)
+            [0, 2, 5, 3],    // Back face (along post front)
+            [1, 4, 5, 2]     // Diagonal chamfer face
+        ]
+    );
 }
 
 // Dovetail slot (female) in mounting block - bottom aligned with mounting block bottom
@@ -153,8 +178,10 @@ module lobe_support() {
 
     // Distance from cone center to near the post (with gap to avoid touching)
     // Post inner face is at lobe_length - post_thickness/2 from cone center
-    fin_gap = 1;  // 1mm gap between fin end and post for easy snap-off
-    post_y = lobe_length - post_thickness/2 - fin_gap;
+    // Also account for chamfer (chamfer_size = post_thickness) extending toward center
+    fin_gap = 1;  // 1mm gap between fin end and chamfer for easy snap-off
+    chamfer_size = post_thickness;  // Same as in base_lobe()
+    post_y = lobe_length - post_thickness/2 - chamfer_size - fin_gap;
 
     // Calculate minimum fin height for 30-degree max overhang
     max_overhang_angle = 30;
