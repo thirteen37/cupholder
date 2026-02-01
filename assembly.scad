@@ -46,7 +46,7 @@ module assembly() {
     ])
     hook();
 
-    // Cup sitting in the holder, resting on top of lobe
+    // Cup sitting in the holder, resting on top of base bar
     if (show_cup) {
         color(cup_color, 0.7)
         translate([0, 0, -post_height])

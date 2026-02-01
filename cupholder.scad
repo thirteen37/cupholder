@@ -13,8 +13,8 @@ module cup_holder() {
             // External mounting block on outside of ring
             mounting_block();
 
-            // Base lobe with vertical post
-            base_lobe();
+            // Base bar with posts on both ends
+            base_bar();
         }
 
         // Dovetail slot in mounting block
@@ -54,54 +54,60 @@ module mounting_block() {
     }
 }
 
-// Base lobe with vertical post
-module base_lobe() {
-    lobe_thickness = cup_wall_thickness;
+// Full-diameter bar with posts on both ends
+module base_bar() {
+    bar_thickness = cup_wall_thickness;
     post_width = hook_width;
     chamfer_size = post_thickness;  // 2mm 45-degree chamfer
+    opposite_block_thickness = cup_wall_thickness;  // Thinner block, no dovetail
 
-    // Vertical post from mounting block down to lobe
-    // Inner face aligned with ring inner surface (cup_diameter/2)
+    // Post on mounting block side (Y+)
     translate([-post_width/2, cup_diameter/2, -post_height])
     cube([post_width, post_thickness, post_height + 0.1]);
 
-    // Lobe at bottom of post
-    translate([0, cup_diameter/2 + post_thickness/2, -post_height - lobe_thickness]) {
-        // Rectangular base flush with post
-        translate([-post_width/2, -post_thickness/2, 0])
-        cube([post_width, post_thickness, lobe_thickness]);
+    // Post on opposite side (Y-)
+    translate([-post_width/2, -cup_diameter/2 - post_thickness, -post_height])
+    cube([post_width, post_thickness, post_height + 0.1]);
 
-        // Extension toward center
-        hull() {
-            translate([0, -post_thickness/2, lobe_thickness/2])
-            cube([post_width, 0.1, lobe_thickness], center=true);
+    // Horizontal bar spanning full diameter (outer edge to outer edge)
+    translate([-post_width/2, -cup_diameter/2 - post_thickness, -post_height - bar_thickness])
+    cube([post_width, cup_diameter + 2 * post_thickness, bar_thickness]);
 
-            translate([0, -lobe_length, 0])
-            cylinder(h = lobe_thickness, d = 25);
-        }
-    }
+    // Block on opposite side - flush with post (same depth as post)
+    translate([-post_width/2, -cup_diameter/2 - post_thickness, 0])
+    cube([post_width, post_thickness, cup_holder_height]);
 
-    // 45-degree chamfer at inside corner where lobe meets post
-    // Strengthens the right-angle joint - fills the concave angle
-    // The inside corner is at the FRONT of the post, ABOVE the lobe
-    front_y = cup_diameter/2;
+    // Chamfer on mounting block side (Y+)
+    front_y_pos = cup_diameter/2;
     polyhedron(
         points = [
-            // Left face triangle (at X = -post_width/2)
-            [-post_width/2, front_y, -post_height],                           // 0: Corner
-            [-post_width/2, front_y - chamfer_size, -post_height],            // 1: Toward center
-            [-post_width/2, front_y, -post_height + chamfer_size],            // 2: Up along post
-            // Right face triangle (at X = +post_width/2)
-            [post_width/2, front_y, -post_height],                            // 3: Corner
-            [post_width/2, front_y - chamfer_size, -post_height],             // 4: Toward center
-            [post_width/2, front_y, -post_height + chamfer_size]              // 5: Up along post
+            [-post_width/2, front_y_pos, -post_height],
+            [-post_width/2, front_y_pos - chamfer_size, -post_height],
+            [-post_width/2, front_y_pos, -post_height + chamfer_size],
+            [post_width/2, front_y_pos, -post_height],
+            [post_width/2, front_y_pos - chamfer_size, -post_height],
+            [post_width/2, front_y_pos, -post_height + chamfer_size]
         ],
         faces = [
-            [0, 1, 2],       // Left triangle
-            [5, 4, 3],       // Right triangle
-            [0, 3, 4, 1],    // Bottom face (along lobe top)
-            [0, 2, 5, 3],    // Back face (along post front)
-            [1, 4, 5, 2]     // Diagonal chamfer face
+            [0, 1, 2], [5, 4, 3],
+            [0, 3, 4, 1], [0, 2, 5, 3], [1, 4, 5, 2]
+        ]
+    );
+
+    // Chamfer on opposite side (Y-) - at inner edge of post
+    front_y_neg = -cup_diameter/2;
+    polyhedron(
+        points = [
+            [-post_width/2, front_y_neg, -post_height],
+            [-post_width/2, front_y_neg + chamfer_size, -post_height],
+            [-post_width/2, front_y_neg, -post_height + chamfer_size],
+            [post_width/2, front_y_neg, -post_height],
+            [post_width/2, front_y_neg + chamfer_size, -post_height],
+            [post_width/2, front_y_neg, -post_height + chamfer_size]
+        ],
+        faces = [
+            [2, 1, 0], [3, 4, 5],
+            [1, 4, 3, 0], [3, 5, 2, 0], [2, 5, 4, 1]
         ]
     );
 }
@@ -221,8 +227,8 @@ module lobe_support() {
     cube([fin_edge_x * 2, fin_flat_length, layer_thickness]);
 }
 
-// Toggle for print support
-show_lobe_support = true;
+// Toggle for print support (not needed with base_bar design)
+show_lobe_support = false;
 
 // Render the cup holder
 cup_holder();
