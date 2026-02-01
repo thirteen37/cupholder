@@ -2,6 +2,7 @@
 // Shows both parts with dovetail joint
 
 include <config.scad>
+$show_center_support = false;  // Hide support in assembly view
 
 use <cupholder.scad>
 use <hook.scad>

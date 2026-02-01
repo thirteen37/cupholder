@@ -28,5 +28,12 @@ dovetail_tolerance = 0.4;    // Gap for fit
 // Calculated values
 mounting_block_thickness = max(post_thickness, cup_wall_thickness) + dovetail_depth;
 
+// Print settings
+nozzle_width = 0.4;          // Nozzle diameter for wall thickness
+layer_height = 0.2;          // Layer height for vertical dimensions
+
+// Support toggle (set false for assembly view)
+$show_center_support = is_undef($show_center_support) ? true : $show_center_support;
+
 // Rendering quality
 $fn = 80;

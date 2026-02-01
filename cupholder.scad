@@ -73,6 +73,47 @@ module base_bar() {
     translate([-post_width/2, -cup_diameter/2 - post_thickness, -post_height - bar_thickness])
     cube([post_width, cup_diameter + 2 * post_thickness, bar_thickness]);
 
+    // Center support post - breaks bridge in half for better printability
+    // Extends from build plate (ring top when flipped) to bar
+    // Hollow with nozzle_width walls, tapers to thin line at bar contact
+    if ($show_center_support) {
+        center_post_width = post_width;  // Full width of bar
+        center_post_depth = 4;
+        taper_height = 5;        // Height of tapered section
+        contact_depth = nozzle_width;  // Nozzle width at bar contact
+        wall = nozzle_width;     // Wall thickness
+        skirt_margin = 1;        // Margin around support for skirt
+        skirt_height = 2 * layer_height;  // 2 layers thick
+
+        difference() {
+            union() {
+                // Main body - from ring top to start of taper
+                translate([-center_post_width/2, -center_post_depth/2, -post_height + taper_height])
+                cube([center_post_width, center_post_depth, cup_holder_height + post_height - taper_height]);
+
+                // Tapered section - narrows from full depth to nozzle_width at bar
+                hull() {
+                    // Bottom of taper (full depth)
+                    translate([-center_post_width/2, -center_post_depth/2, -post_height + taper_height])
+                    cube([center_post_width, center_post_depth, 0.1]);
+
+                    // Top of taper (thin contact line at bar)
+                    translate([-center_post_width/2, -contact_depth/2, -post_height])
+                    cube([center_post_width, contact_depth, 0.1]);
+                }
+
+                // Skirt at foot of support (build plate when flipped)
+                translate([-(center_post_width + 2*skirt_margin)/2, -(center_post_depth + 2*skirt_margin)/2, cup_holder_height - skirt_height])
+                cube([center_post_width + 2*skirt_margin, center_post_depth + 2*skirt_margin, skirt_height]);
+            }
+
+            // Hollow out the main body (not the taper or skirt)
+            // Starts above skirt level so skirt remains solid
+            translate([-(center_post_width - 2*wall)/2, -(center_post_depth - 2*wall)/2, -post_height + taper_height])
+            cube([center_post_width - 2*wall, center_post_depth - 2*wall, cup_holder_height + post_height - taper_height - skirt_height]);
+        }
+    }
+
     // Block on opposite side - flush with post (same depth as post)
     translate([-post_width/2, -cup_diameter/2 - post_thickness, 0])
     cube([post_width, post_thickness, cup_holder_height]);
