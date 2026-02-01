@@ -106,7 +106,7 @@ module dovetail_negative() {
 // Temporary print support - hollow cylinder from lobe tip to ring top
 // Remove after printing by snapping off
 module lobe_support() {
-    support_wall = 0.4;  // Single nozzle width for easy removal
+    support_wall = 0.5;  // Single nozzle width for easy removal
     support_diameter = 25;  // Same as lobe tip diameter
     support_gap = 0.2;  // Layer height gap for easy snap-off
     lobe_thickness = cup_wall_thickness;
@@ -125,6 +125,17 @@ module lobe_support() {
         cylinder(h = support_height, d = support_diameter);
         translate([0, 0, -0.1])
         cylinder(h = support_height + 0.2, d = support_diameter - 2 * support_wall);
+    }
+
+    // Brim at top of support (becomes bottom when flipped for printing)
+    brim_extension = 0.8;
+    brim_thickness = 0.4;  // 2 layers
+    brim_diameter = support_diameter + 2 * brim_extension;
+    translate([0, lobe_tip_y, support_top - brim_thickness])
+    difference() {
+        cylinder(h = brim_thickness, d = brim_diameter);
+        translate([0, 0, -0.1])
+        cylinder(h = brim_thickness + 0.2, d = brim_diameter / 2);
     }
 }
 
