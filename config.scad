@@ -6,10 +6,7 @@ cup_diameter = 70;           // Inner diameter of the band
 cup_holder_height = 20;      // Height of the holder band (2cm)
 cup_wall_thickness = 2;      // Wall thickness of the band
 
-// Base lobe settings
-lobe_length = 35;            // How far the lobe extends toward ring center
-
-// Vertical post settings (connects mounting block to lobe)
+// Vertical post settings (connects ring to base bar)
 post_height = 40;            // Height of vertical post
 post_thickness = 2;          // Thickness of vertical post
 

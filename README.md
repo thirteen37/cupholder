@@ -5,7 +5,7 @@ A parametric OpenSCAD model for a 3D-printable car cupholder with a hook attachm
 ## Design
 
 Two-piece design connected via dovetail joint:
-- **Cup holder**: Cylindrical ring with external mounting block and base lobe for cup support
+- **Cup holder**: Cylindrical ring with external mounting block and base bar for cup support
 - **Hook**: L-shaped arm that slides into the cupholder's dovetail slot
 
 ## Files
@@ -40,7 +40,7 @@ Creates `assembly_preview.html` with an interactive 3D view (cupholder, hook, an
 ./export.sh
 ```
 Exports print-ready 3MF files:
-- `cupholder_print.3mf` - cupholder with lobe support, flipped for printing
+- `cupholder_print.3mf` - cupholder flipped for printing
 - `hook_print.3mf` - hook flipped for printing
 
 **Export STL files manually:**
@@ -61,13 +61,12 @@ All dimensions in `config.scad` are in millimeters.
 | `cup_holder_height` | 20 | Height of the ring |
 | `cup_wall_thickness` | 1.2 | Wall thickness of the ring |
 
-### Post and Lobe Dimensions
+### Post Dimensions
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `post_height` | 40 | Height of vertical post below ring |
-| `post_thickness` | 2 | Thickness of vertical post |
-| `lobe_length` | 35 | How far lobe extends toward ring center |
+| `post_height` | 40 | Height of vertical posts below ring |
+| `post_thickness` | 2 | Thickness of vertical posts |
 
 ### Hook Dimensions
 
@@ -107,7 +106,7 @@ All dimensions in `config.scad` are in millimeters.
 ## Printing
 
 Print both parts upside-down to minimize overhangs:
-- **Cup holder**: Ring on bed, lobe on top. Use the included hollow cylinder support (toggle `show_lobe_support` in cupholder.scad).
+- **Cup holder**: Ring on bed, base bar on top. No supports needed.
 - **Hook**: Hook tip on bed, dovetail on top. The dovetail has a 30° chamfer for printability.
 
 Use `print_orientation.scad` to preview both parts in print orientation.
