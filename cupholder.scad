@@ -217,8 +217,8 @@ module lobe_support() {
     // Start slightly past cone edge to avoid overlap
     fin_flat_start = support_diameter_bottom/2 - 0.1;  // Slight overlap with cone for clean union
     fin_flat_length = post_y - fin_flat_start;
-    translate([0, lobe_tip_y + fin_flat_start + fin_flat_length/2, support_bottom])
-    cube([fin_edge_x * 2, fin_flat_length, layer_thickness], center=true);
+    translate([-fin_edge_x, lobe_tip_y + fin_flat_start, support_bottom])
+    cube([fin_edge_x * 2, fin_flat_length, layer_thickness]);
 }
 
 // Toggle for print support
