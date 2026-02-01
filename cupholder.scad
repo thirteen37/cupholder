@@ -103,11 +103,12 @@ module dovetail_negative() {
     ]);
 }
 
-// Temporary print support - hollow cylinder from lobe tip to ring top
+// Temporary print support - hollow cone from lobe tip to ring top
 // Remove after printing by snapping off
 module lobe_support() {
     support_wall = 0.5;  // Single nozzle width for easy removal
-    support_diameter = 25;  // Same as lobe tip diameter
+    support_diameter_bottom = 25;  // Same as lobe tip diameter (at lobe)
+    support_diameter_top = 10;     // Narrow end (at ring top, becomes print bed)
     support_gap = 0.2;  // Layer height gap for easy snap-off
     lobe_thickness = cup_wall_thickness;
 
@@ -122,21 +123,71 @@ module lobe_support() {
 
     translate([0, lobe_tip_y, support_bottom])
     difference() {
-        cylinder(h = support_height, d = support_diameter);
+        cylinder(h = support_height, d1 = support_diameter_bottom, d2 = support_diameter_top);
         translate([0, 0, -0.1])
-        cylinder(h = support_height + 0.2, d = support_diameter - 2 * support_wall);
+        cylinder(h = support_height + 0.2,
+                 d1 = support_diameter_bottom - 2 * support_wall,
+                 d2 = support_diameter_top - 2 * support_wall);
     }
+
+    // Flat top on cone (facing lobe) - one layer thick
+    layer_thickness = 0.2;
+    translate([0, lobe_tip_y, support_bottom])
+    cylinder(h = layer_thickness, d = support_diameter_bottom);
 
     // Brim at top of support (becomes bottom when flipped for printing)
     brim_extension = 0.8;
     brim_thickness = 0.4;  // 2 layers
-    brim_diameter = support_diameter + 2 * brim_extension;
+    brim_diameter = support_diameter_top + 2 * brim_extension;
     translate([0, lobe_tip_y, support_top - brim_thickness])
     difference() {
         cylinder(h = brim_thickness, d = brim_diameter);
         translate([0, 0, -0.1])
         cylinder(h = brim_thickness + 0.2, d = brim_diameter / 2);
     }
+
+    // Fins to support straight edges of lobe
+    // Straight edges run at X = ±(post_width/2) from circular tip toward post
+    post_width = hook_width;
+    fin_edge_x = post_width / 2;  // X position of lobe straight edges (12.5mm)
+
+    // Distance from cone center to near the post (with gap to avoid touching)
+    // Post inner face is at lobe_length - post_thickness/2 from cone center
+    fin_gap = 1;  // 1mm gap between fin end and post for easy snap-off
+    post_y = lobe_length - post_thickness/2 - fin_gap;
+
+    // Calculate minimum fin height for 30-degree max overhang
+    max_overhang_angle = 30;
+    fin_height = post_y * tan(max_overhang_angle);
+
+    // Cone radius at fin_height (interpolate between bottom and top)
+    cone_radius_at_fin = support_diameter_bottom/2 -
+        (support_diameter_bottom - support_diameter_top)/2 * (fin_height / support_height);
+
+    for (side = [-1, 1]) {
+        translate([0, lobe_tip_y, support_bottom])
+        hull() {
+            // Bottom of fin at lobe level - from cone side to post
+            // Start at side of cone (X = ±radius, Y = 0)
+            translate([side * support_diameter_bottom/2, 0, 0])
+            cube([support_wall, 0.01, 0.01], center=true);
+
+            // End at post edge
+            translate([side * fin_edge_x, post_y, 0])
+            cube([support_wall, 0.01, 0.01], center=true);
+
+            // Top of fin - only as high as needed for 30-degree overhang
+            translate([side * cone_radius_at_fin, 0, fin_height])
+            cube([support_wall, 0.01, 0.01], center=true);
+        }
+    }
+
+    // Flat top between fins (like the cone top)
+    // Start slightly past cone edge to avoid overlap
+    fin_flat_start = support_diameter_bottom/2 - 0.1;  // Slight overlap with cone for clean union
+    fin_flat_length = post_y - fin_flat_start;
+    translate([0, lobe_tip_y + fin_flat_start + fin_flat_length/2, support_bottom])
+    cube([fin_edge_x * 2, fin_flat_length, layer_thickness], center=true);
 }
 
 // Toggle for print support
