@@ -18,10 +18,10 @@ Render to PNG (headless):
 openscad -o output.png --camera=0,0,0,55,0,25,250 --imgsize=800,600 assembly.scad
 ```
 
-Export STL for printing:
+Export for printing (prefer 3MF format):
 ```bash
-openscad -o cupholder.stl cupholder.scad
-openscad -o hook.stl hook.scad
+openscad -o cupholder.3mf cupholder.scad
+openscad -o hook.3mf hook.scad
 ```
 
 ## Architecture
