@@ -128,7 +128,7 @@ module dovetail_negative() {
     ]);
 }
 
-// Temporary print support - hollow cone from lobe tip to ring top
+// Temporary print support - cone + cylinder from lobe tip to ring top
 // Remove after printing by snapping off
 module lobe_support() {
     support_wall = 0.5;  // Single nozzle width for easy removal
@@ -141,18 +141,39 @@ module lobe_support() {
     lobe_tip_y = cup_diameter/2 + post_thickness/2 - lobe_length;
 
     // Height from just above lobe top (with gap) to top of ring
-    // Gap is between support bottom and lobe top surface (Z = -post_height)
     support_bottom = -post_height + support_gap;
     support_top = cup_holder_height;
     support_height = support_top - support_bottom;
 
+    // Fin parameters (calculated first to determine cone height)
+    post_width = hook_width;
+    fin_edge_x = post_width / 2;
+    fin_gap = 1;
+    chamfer_size = post_thickness;
+    post_y = lobe_length - post_thickness/2 - chamfer_size - fin_gap;
+    max_overhang_angle = 30;
+    fin_height = post_y * tan(max_overhang_angle);
+
+    // Cone matches fin height; transitions to fixed 10mm cylinder
+    cone_height = fin_height;
+    cylinder_height = support_height - cone_height;
+
+    // Bottom cone section (from 25mm to 10mm over fin_height)
     translate([0, lobe_tip_y, support_bottom])
     difference() {
-        cylinder(h = support_height, d1 = support_diameter_bottom, d2 = support_diameter_top);
+        cylinder(h = cone_height, d1 = support_diameter_bottom, d2 = support_diameter_top);
         translate([0, 0, -0.1])
-        cylinder(h = support_height + 0.2,
+        cylinder(h = cone_height + 0.1,
                  d1 = support_diameter_bottom - 2 * support_wall,
                  d2 = support_diameter_top - 2 * support_wall);
+    }
+
+    // Top cylinder section (10mm diameter)
+    translate([0, lobe_tip_y, support_bottom + cone_height])
+    difference() {
+        cylinder(h = cylinder_height, d = support_diameter_top);
+        translate([0, 0, -0.1])
+        cylinder(h = cylinder_height + 0.2, d = support_diameter_top - 2 * support_wall);
     }
 
     // Flat top on cone (facing lobe) - one layer thick
@@ -171,25 +192,8 @@ module lobe_support() {
         cylinder(h = brim_thickness + 0.2, d = brim_diameter / 2);
     }
 
-    // Fins to support straight edges of lobe
-    // Straight edges run at X = ±(post_width/2) from circular tip toward post
-    post_width = hook_width;
-    fin_edge_x = post_width / 2;  // X position of lobe straight edges (12.5mm)
-
-    // Distance from cone center to near the post (with gap to avoid touching)
-    // Post inner face is at lobe_length - post_thickness/2 from cone center
-    // Also account for chamfer (chamfer_size = post_thickness) extending toward center
-    fin_gap = 1;  // 1mm gap between fin end and chamfer for easy snap-off
-    chamfer_size = post_thickness;  // Same as in base_lobe()
-    post_y = lobe_length - post_thickness/2 - chamfer_size - fin_gap;
-
-    // Calculate minimum fin height for 30-degree max overhang
-    max_overhang_angle = 30;
-    fin_height = post_y * tan(max_overhang_angle);
-
-    // Cone radius at fin_height (interpolate between bottom and top)
-    cone_radius_at_fin = support_diameter_bottom/2 -
-        (support_diameter_bottom - support_diameter_top)/2 * (fin_height / support_height);
+    // Radius at fin_height (top of cone = cylinder diameter)
+    radius_at_fin = support_diameter_top / 2;
 
     for (side = [-1, 1]) {
         translate([0, lobe_tip_y, support_bottom])
@@ -204,7 +208,7 @@ module lobe_support() {
             cube([support_wall, 0.01, 0.01], center=true);
 
             // Top of fin - only as high as needed for 30-degree overhang
-            translate([side * cone_radius_at_fin, 0, fin_height])
+            translate([side * radius_at_fin, 0, fin_height])
             cube([support_wall, 0.01, 0.01], center=true);
         }
     }
