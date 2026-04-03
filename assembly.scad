@@ -6,6 +6,7 @@ $show_center_support = false;  // Hide support in assembly view
 
 use <cupholder.scad>
 use <hook.scad>
+use <hook_down.scad>
 
 // Assembly mode
 show_assembled = true;
@@ -13,10 +14,12 @@ explode_distance = 30;
 
 // Display options
 show_cup = true;
+show_hook_down = true;
 
 // Colors
 cupholder_color = "SteelBlue";
 hook_color = "Orange";
+hook_down_color = "Crimson";
 cup_color = "White";
 
 // Starbucks Grande cup (approximate dimensions)
@@ -46,6 +49,17 @@ module assembly() {
         explode_offset  // Dovetail starts at z=0
     ])
     hook();
+
+    // Hook down - slides up into same dovetail slot from outside
+    if (show_hook_down) {
+        color(hook_down_color)
+        translate([
+            0,
+            cup_diameter/2 + cup_wall_thickness - 0.1 + mounting_block_thickness,
+            explode_offset
+        ])
+        hook_down();
+    }
 
     // Cup sitting in the holder, resting on top of base bar
     if (show_cup) {
