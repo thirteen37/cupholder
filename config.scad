@@ -18,6 +18,14 @@ hook_tip_depth = 20;         // [10:1:40] How far the hook tip curls down
 hook_width = 25;             // [15:1:40] Width of the hook arm
 hook_thickness = 2;          // [1:0.5:5] Thickness of the hook arm
 
+/* [Hook Down] */
+hook_down_arm_height = 32.5;   // [20:0.5:50] Height of vertical arm
+hook_down_tip_length = 20;     // [8:1:30] Horizontal length of hook tip
+hook_down_tip_depth = 10;      // [5:1:25] Height of upward lip
+hook_down_thickness = 4;       // [2:0.5:8] Thickness of hook arm
+hook_down_tip_chamfer = 1;     // [0:0.5:4] Tip chamfer depth (each side)
+hook_down_corner_chamfer = 2;  // [0:0.5:4] Inside corner reinforcement size
+
 /* [Dovetail Joint] */
 dovetail_width_base = 10;    // [6:1:15] Width at narrow end (top)
 dovetail_width_top = 14;     // [10:1:20] Width at wide end (bottom)
