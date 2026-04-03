@@ -122,7 +122,7 @@ All dimensions in `config.scad` are in millimeters.
 ## Printing
 
 - **Cup holder**: Printed upside-down. Ring on bed, base bar on top. No supports needed.
-- **Hook (upward)**: Printed upside-down. Hook tip on bed, dovetail on top. The dovetail has a 30° chamfer for printability.
-- **Hook (downward)**: Prints right-side up. L-tip shelf flat on bed, dovetail at top. No supports needed.
+- **Hook (upward)**: Printed on its side for layer strength. Supports needed for L-tip overhang.
+- **Hook (downward)**: Printed on its side for layer strength. Supports needed for tip overhang.
 
 Use `print_orientation.scad` to preview all parts in print orientation.
